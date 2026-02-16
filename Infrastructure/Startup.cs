@@ -1,0 +1,32 @@
+﻿using Finbuckle.MultiTenant;
+using Infrastructure.Context;
+using Infrastructure.Tenancy;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace Infrastructure;
+
+public static class Startup
+{
+    public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration config)
+    {
+        return services
+            .AddDbContext<TenantDbContext>(options => options
+                .UseSqlServer(config.GetConnectionString("DefaultConnection")))
+            .AddMultiTenant<CompanyTenantInfo>()
+                .WithHeaderStrategy(TenancyConstants.TenantIdName)
+                .WithClaimStrategy(TenancyConstants.TenantIdName)
+                .WithEFCoreStore<TenantDbContext, CompanyTenantInfo>()
+                .Services
+            .AddDbContext<ApplicationDbContext>(options => options
+                .UseSqlServer(config.GetConnectionString("DefaultConnection")));
+    }
+
+    public static IApplicationBuilder UseInfrastructure(this IApplicationBuilder app)
+    {
+        return app
+            .UseMultiTenant();
+    }
+}
