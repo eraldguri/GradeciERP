@@ -8,6 +8,7 @@ public static class CompanyAction
     public const string Create = nameof(Create);
     public const string Update = nameof(Update);
     public const string Delete = nameof(Delete);
+    public const string RefreshToken = nameof(RefreshToken);
     public const string UpgradeSubscription = nameof(UpgradeSubscription);
 }
 
@@ -19,6 +20,7 @@ public static class CompanyFeature
     public const string UserRoles = nameof(UserRoles);
     public const string RoleClaims = nameof(RoleClaims);
     public const string Companies = nameof(Companies);
+    public const string Tokens = nameof(Tokens);
 }
 
 public record CompanyPermission(string Action, string Feature, string Description, string Group, bool IsBasic = false, bool IsRoot = false)
@@ -57,6 +59,8 @@ public static class CompanyPermissions
         new CompanyPermission(CompanyAction.Create, CompanyFeature.Companies, "Create Companies", "Organizations"),
         new CompanyPermission(CompanyAction.Update, CompanyFeature.Companies, "Update Companies", "Organizations"),
         new CompanyPermission(CompanyAction.Delete, CompanyFeature.Companies, "Delete Companies", "Organizations"),
+
+        new CompanyPermission(CompanyAction.RefreshToken, CompanyFeature.Tokens, "Generate Refresh Token", "SystemAccess", IsBasic: true),
     ];
 
     public static IReadOnlyList<CompanyPermission> All { get; } 

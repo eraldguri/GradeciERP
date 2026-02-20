@@ -1,10 +1,12 @@
 ﻿using Application;
+using Application.Features.Identity.Tokens;
 using Application.Wrappers;
 using Finbuckle.MultiTenant;
 using Infrastructure.Constants;
 using Infrastructure.Context;
 using Infrastructure.Identity.Auth;
 using Infrastructure.Identity.Models;
+using Infrastructure.Identity.Tokens;
 using Infrastructure.OpenApi;
 using Infrastructure.Tenancy;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -67,7 +69,8 @@ public static class Startup
             })
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders()
-            .Services;
+            .Services
+            .AddScoped<ITokenService, TokenService>();
     }
 
     internal static IServiceCollection AddPermissions(this IServiceCollection services)
