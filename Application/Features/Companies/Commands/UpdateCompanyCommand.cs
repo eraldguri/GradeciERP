@@ -1,9 +1,10 @@
-﻿using Application.Wrappers;
+﻿using Application.Pipelines;
+using Application.Wrappers;
 using MediatR;
 
 namespace Application.Features.Companies.Commands;
 
-public class UpdateCompanyCommand : IRequest<IResponseWrapper>
+public class UpdateCompanyCommand : IRequest<IResponseWrapper>, IValidateMe
 {
     public UpdateCompanyRequest? UpdateCompany { get; set; }
 }

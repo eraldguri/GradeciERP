@@ -1,11 +1,12 @@
-﻿using Application.Wrappers;
+﻿using Application.Pipelines;
+using Application.Wrappers;
 using Domain;
 using Mapster;
 using MediatR;
 
 namespace Application.Features.Companies.Commands;
 
-public class CreateCompanyCommand : IRequest<IResponseWrapper>
+public class CreateCompanyCommand : IRequest<IResponseWrapper>, IValidateMe 
 {
     public CreateCompanyRequest? CreateCompany { get; set; }
 }
