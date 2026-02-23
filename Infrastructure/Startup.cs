@@ -1,5 +1,6 @@
 ﻿using Application;
 using Application.Features.Identity.Tokens;
+using Application.Features.Tenancy;
 using Application.Wrappers;
 using Finbuckle.MultiTenant;
 using Infrastructure.Constants;
@@ -43,6 +44,7 @@ public static class Startup
                 .UseSqlServer(config.GetConnectionString("DefaultConnection")))
             .AddTransient<ITenantDbSeeder, TenantDbSeeder>()
             .AddTransient<ApplicationDbSeeder>()
+            .AddTransient<ITenantService, TenantService>()
             .AddIdentityService()
             .AddPermissions()
             .AddOpenApiDocumentation(config);
@@ -136,7 +138,7 @@ public static class Startup
                                 context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                                 context.Response.ContentType = "application/json";
 
-                                var result = JsonConvert.SerializeObject(ResponseWrapper.Fail("An unhandler error has occurred"));
+                                var result = JsonConvert.SerializeObject(ResponseWrapper.Fail("An unhandled error has occurred"));
                                 return context.Response.WriteAsync(result);
                             }
                             return Task.CompletedTask;
