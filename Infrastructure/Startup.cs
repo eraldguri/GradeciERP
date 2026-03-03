@@ -1,12 +1,15 @@
 ﻿using Application;
 using Application.Features.Companies;
+using Application.Features.Identity.Roles;
 using Application.Features.Identity.Tokens;
+using Application.Features.Identity.Users;
 using Application.Features.Tenancy;
 using Application.Wrappers;
 using Finbuckle.MultiTenant;
 using Infrastructure.Companies;
 using Infrastructure.Constants;
 using Infrastructure.Context;
+using Infrastructure.Identity;
 using Infrastructure.Identity.Auth;
 using Infrastructure.Identity.Models;
 using Infrastructure.Identity.Tokens;
@@ -75,7 +78,11 @@ public static class Startup
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders()
             .Services
-            .AddScoped<ITokenService, TokenService>();
+            .AddScoped<ITokenService, TokenService>()
+            .AddScoped<IRoleService, RoleService>()
+            .AddScoped<IUserService, UserService>()
+            .AddScoped<ICurrentUserService, CurrentUserService>()
+            .AddScoped<CurrentUserMiddleware>();
     }
 
     internal static IServiceCollection AddPermissions(this IServiceCollection services)
@@ -235,6 +242,7 @@ public static class Startup
     {
         return app
             .UseAuthentication()
+            .UseMiddleware<CurrentUserMiddleware>()
             .UseMultiTenant()
             .UseAuthorization()
             .UseOpenApiDocumentation();
