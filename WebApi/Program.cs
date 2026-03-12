@@ -10,6 +10,16 @@ namespace WebApi
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("Gradeci ERP App", policy =>
+                {
+                    policy.WithOrigins("http://localhost:3000")
+                        .AllowAnyMethod()
+                        .AllowAnyHeader();
+                });
+            });
+
             builder.Services.AddControllers();
 
             builder.Services.AddInfrastructureServices(builder.Configuration);
@@ -23,6 +33,8 @@ namespace WebApi
             await app.Services.AddDatabaseInitializerAsync();
 
             app.UseHttpsRedirection();
+
+            app.UseCors("Gradeci ERP App");
 
             app.UseInfrastructure();
 
