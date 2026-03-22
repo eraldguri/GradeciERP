@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace WebApi.Controllers;
 
 [Route("api/[controller]")]
-public class ConmpaniesController : BaseApiController
+public class Companies : BaseApiController
 {
     [HttpPost("add")]
     [ShouldHavePermission(CompanyAction.Create, CompanyFeature.Companies)]

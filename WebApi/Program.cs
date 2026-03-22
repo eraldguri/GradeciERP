@@ -14,7 +14,7 @@ namespace WebApi
             {
                 options.AddPolicy("Gradeci ERP App", policy =>
                 {
-                    policy.WithOrigins("http://localhost:3000")
+                    policy.WithOrigins("http://localhost:4200")
                         .AllowAnyMethod()
                         .AllowAnyHeader();
                 });
