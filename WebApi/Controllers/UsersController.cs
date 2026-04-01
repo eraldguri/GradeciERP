@@ -50,11 +50,11 @@ public class UsersController : BaseApiController
         return NotFound(response);
     }
 
-    [HttpPut("update-roles/{roleId}")]
+    [HttpPut("update-roles/{userId}")]
     [ShouldHavePermission(CompanyAction.Update, CompanyFeature.UserRoles)]
-    public async Task<IActionResult> UpdateUserRolesAsync([FromBody] UserRolesRequest userRoleRequest, string roleId)
+    public async Task<IActionResult> UpdateUserRolesAsync([FromBody] UserRolesRequest userRoleRequest, string userId)
     {
-        var response = await Sender.Send(new UpdateUserRolesCommand { UserRolesRequest = userRoleRequest, RoleId = roleId });
+        var response = await Sender.Send(new UpdateUserRolesCommand { UserRolesRequest = userRoleRequest, UserId = userId });
         if (response.IsSuccessful)
         {
             return Ok(response);

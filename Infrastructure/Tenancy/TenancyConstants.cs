@@ -3,7 +3,7 @@
 public class TenancyConstants
 {
     public const string TenantIdName = "tenant";
-    public const string DefaultPassword = "password";
+    public const string DefaultPassword = "password123";
     public const string FirstName = "Erald";
     public const string LastName = "Guri";
 
