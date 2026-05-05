@@ -14,7 +14,7 @@ public class CreateCommandHandler(IRoleService roleService) : IRequestHandler<Cr
 
     public async Task<IResponseWrapper> Handle(CreateRoleCommand request, CancellationToken cancellationToken)
     {
-        var roleName = await _roleService.CreateAsync(request.CreateRole!);
-        return await ResponseWrapper<string>.SuccessAsync(message: $"Role '{roleName}' created successfully.");
+        var role = await _roleService.CreateAsync(request.CreateRole!);
+        return await ResponseWrapper<RoleResponse>.SuccessAsync(data: role, message: $"Role '{role.Name}' created successfully.");
     }
 }

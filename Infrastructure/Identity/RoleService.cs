@@ -27,7 +27,7 @@ public class RoleService : IRoleService
         _tenantInfoContextAccessor = tenantInfoContextAccessor;
     }
 
-    public async Task<string> CreateAsync(CreateRoleRequest request)
+    public async Task<RoleResponse> CreateAsync(CreateRoleRequest request)
     {
         var newRole = new ApplicationRole
         {
@@ -42,7 +42,7 @@ public class RoleService : IRoleService
             throw new IdentityException(IdentityHelper.GetIdentityResultErrorDescriptions(result));
         }
 
-        return newRole.Name!;
+        return newRole.Adapt<RoleResponse>();
     }
 
     public async Task<string> DeleteAsync(string id)
