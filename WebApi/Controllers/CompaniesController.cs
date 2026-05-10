@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace WebApi.Controllers;
 
 [Route("api/[controller]")]
-public class Companies : BaseApiController
+public class CompaniesController : BaseApiController
 {
     [HttpPost("add")]
     [ShouldHavePermission(CompanyAction.Create, CompanyFeature.Companies)]
@@ -47,7 +47,7 @@ public class Companies : BaseApiController
         return NotFound(response);
     }
 
-    [HttpGet("by-id{companyId}")]
+    [HttpGet("by-id/{companyId}")]
     [ShouldHavePermission(CompanyAction.Read, CompanyFeature.Companies)]
     public async Task<IActionResult> GetCompanyByIdAsync(int companyId)
     {
@@ -59,7 +59,7 @@ public class Companies : BaseApiController
         return NotFound(response);
     }
 
-    [HttpGet("by-name{name}")]
+    [HttpGet("by-name/{name}")]
     [ShouldHavePermission(CompanyAction.Read, CompanyFeature.Companies)]
     public async Task<IActionResult> GetCompanyByNameAsync(string name)
     {
