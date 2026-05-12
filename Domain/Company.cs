@@ -8,4 +8,5 @@ public class Company
     public string? TimeZone { get; set; }
     public string? Currency { get; set; }
     public DateTime EstablishedDate { get; set; }
+    public ICollection<CompanyBranch> Branches { get; set; } = [];
 }

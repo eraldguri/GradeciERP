@@ -1,5 +1,6 @@
 ﻿using Application;
 using Application.Features.Companies;
+using Application.Features.Companies.Branch;
 using Application.Features.Identity.Roles;
 using Application.Features.Identity.Tokens;
 using Application.Features.Identity.Users;
@@ -51,6 +52,7 @@ public static class Startup
             .AddTransient<ApplicationDbSeeder>()
             .AddTransient<ITenantService, TenantService>()
             .AddTransient<ICompanyService, CompanyService>()
+            .AddTransient<IBranchService, BranchService>()
             .AddIdentityService()
             .AddPermissions()
             .AddOpenApiDocumentation(config);
