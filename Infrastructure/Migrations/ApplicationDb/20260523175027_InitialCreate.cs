@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Infrastructure.Migrations.ApplicationDb
 {
     /// <inheritdoc />
-    public partial class InitialApplicationDbGeneration : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -220,7 +220,7 @@ namespace Infrastructure.Migrations.ApplicationDb
                 schema: "Identity",
                 table: "Roles",
                 column: "NormalizedName",
-                unique: false,
+                unique: true,
                 filter: "[NormalizedName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
