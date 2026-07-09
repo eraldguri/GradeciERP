@@ -30,6 +30,11 @@ public class TenantDbSeeder : ITenantDbSeeder
 
     private async Task InitializeDatabaseWithTenantAsync(CancellationToken ct)
     {
+        if (_tenantDbContext.Database.GetMigrations().Any())
+        {
+            await _tenantDbContext.Database.MigrateAsync(ct);
+        }
+
         if (await _tenantDbContext.TenantInfo.FindAsync([TenancyConstants.Root.Id], ct) is null)
         {
             var rootTenant = new CompanyTenantInfo
