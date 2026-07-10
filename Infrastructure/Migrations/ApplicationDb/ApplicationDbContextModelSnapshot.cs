@@ -22,7 +22,7 @@ namespace Infrastructure.Migrations.ApplicationDb
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Domain.Company", b =>
+            modelBuilder.Entity("Domain.Organization", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -54,7 +54,7 @@ namespace Infrastructure.Migrations.ApplicationDb
 
                     b.HasKey("Id");
 
-                    b.ToTable("Companies", "organizations");
+                    b.ToTable("Organizations", "Businesses");
 
                     b.HasAnnotation("Finbuckle:MultiTenant", true);
                 });

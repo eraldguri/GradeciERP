@@ -7,31 +7,21 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Infrastructure.Tenancy;
 
-public class TenantService : ITenantService
+public class TenantService(IMultiTenantStore<OrgTenantInfo> tenantsStore, IServiceProvider serviceProvider)
+    : ITenantService
 {
-    private readonly IMultiTenantStore<CompanyTenantInfo> _tenantsStore;
-    private readonly ApplicationDbSeeder _dbSeeder;
-    private readonly IServiceProvider _serviceProvider;
-
-    public TenantService(IMultiTenantStore<CompanyTenantInfo> tenantsStore, ApplicationDbSeeder dbSeeder, IServiceProvider serviceProvider)
-    {
-        _tenantsStore = tenantsStore;
-        _dbSeeder = dbSeeder;
-        _serviceProvider = serviceProvider;
-    }
-
     public async Task<string> ActivateAsync(string id)
     {
-        var tenantInDb = await _tenantsStore.TryGetAsync(id);
+        var tenantInDb = await tenantsStore.TryGetAsync(id);
         tenantInDb!.IsActive = true;
 
-        await _tenantsStore.TryUpdateAsync(tenantInDb);
+        await tenantsStore.TryUpdateAsync(tenantInDb);
         return tenantInDb.Identifier!;
     }
 
     public async Task<string> CreateTenantAsync(CreateTenantRequest createTenant, CancellationToken ct)
     {
-        var newTenant = new CompanyTenantInfo
+        var newTenant = new OrgTenantInfo
         {
             Id = createTenant.Identifier,
             Identifier = createTenant.Identifier,
@@ -44,13 +34,13 @@ public class TenantService : ITenantService
             IsActive = createTenant.IsActive,
         };
 
-        await _tenantsStore.TryAddAsync(newTenant);
+        await tenantsStore.TryAddAsync(newTenant);
 
         // Seed the tenant's database
-        using var scope = _serviceProvider.CreateScope();
+        using var scope = serviceProvider.CreateScope();
 
-        _serviceProvider.GetRequiredService<IMultiTenantContextSetter>()
-            .MultiTenantContext = new MultiTenantContext<CompanyTenantInfo>()
+        serviceProvider.GetRequiredService<IMultiTenantContextSetter>()
+            .MultiTenantContext = new MultiTenantContext<OrgTenantInfo>
             {
                 TenantInfo = newTenant
             };
@@ -62,32 +52,32 @@ public class TenantService : ITenantService
 
     public async Task<string> DeactivateAsync(string id)
     {
-        var tenatstInDb = await _tenantsStore.TryGetAsync(id);
-        tenatstInDb!.IsActive = false;
+        var testInDb = await tenantsStore.TryGetAsync(id);
+        testInDb!.IsActive = false;
 
-        await _tenantsStore.TryUpdateAsync(tenatstInDb);
-        return tenatstInDb.Identifier!;
+        await tenantsStore.TryUpdateAsync(testInDb);
+        return testInDb.Identifier!;
     }
 
     public async Task<TenantResponse> GetTenantByIdAsync(string id)
     {
-        var tenantInDb = await _tenantsStore.TryGetAsync(id);
+        var tenantInDb = await tenantsStore.TryGetAsync(id);
 
         return tenantInDb.Adapt<TenantResponse>();
     }
 
     public async Task<List<TenantResponse>> GetTenantsAsync()
     {
-        var tenantsInDb = await _tenantsStore.GetAllAsync();
+        var tenantsInDb = await tenantsStore.GetAllAsync();
         return tenantsInDb.Adapt<List<TenantResponse>>();
     }
 
     public async Task<string> UpdateSubscriptionAsync(UpdateTenantSubscriptionRequest updateTenantSubscription)
     {
-        var tenantInDb = await _tenantsStore.TryGetAsync(updateTenantSubscription.TenantId!);
+        var tenantInDb = await tenantsStore.TryGetAsync(updateTenantSubscription.TenantId!);
         tenantInDb!.ValidUpTo = updateTenantSubscription.NewExpiryDate;
 
-        await _tenantsStore.TryUpdateAsync(tenantInDb);
+        await tenantsStore.TryUpdateAsync(tenantInDb);
 
         return tenantInDb.Identifier!;
     }

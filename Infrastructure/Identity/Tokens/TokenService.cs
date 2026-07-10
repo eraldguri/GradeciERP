@@ -19,12 +19,12 @@ public class TokenService : ITokenService
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly RoleManager<ApplicationRole> _roleManager;
-    private readonly IMultiTenantContextAccessor<CompanyTenantInfo> _tenantContextAccessor;
+    private readonly IMultiTenantContextAccessor<OrgTenantInfo> _tenantContextAccessor;
     private readonly JwtSettings _jwtSettings;
 
     public TokenService(
         UserManager<ApplicationUser> userManager,
-        IMultiTenantContextAccessor<CompanyTenantInfo> tenantContextAccessor,
+        IMultiTenantContextAccessor<OrgTenantInfo> tenantContextAccessor,
         RoleManager<ApplicationRole> roleManager,
         IOptions<JwtSettings> jwtSettings)
     {

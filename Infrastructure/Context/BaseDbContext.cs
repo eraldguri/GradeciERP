@@ -8,7 +8,9 @@ using System.Reflection;
 
 namespace Infrastructure.Context;
 
-public abstract class BaseDbContext
+public abstract class BaseDbContext(
+    IMultiTenantContextAccessor<OrgTenantInfo> tenantInfoContextAccessor,
+    DbContextOptions options)
     : MultiTenantIdentityDbContext<
         ApplicationUser,
         ApplicationRole,
@@ -17,15 +19,9 @@ public abstract class BaseDbContext
         IdentityUserRole<string>,
         IdentityUserLogin<string>,
         ApplicationRoleClaims,
-        IdentityUserToken<string>>
+        IdentityUserToken<string>>(tenantInfoContextAccessor, options)
 {
-    private new CompanyTenantInfo? TenantInfo { get; set; }
-
-    protected BaseDbContext(IMultiTenantContextAccessor<CompanyTenantInfo> tenantInfoContextAccessor, DbContextOptions options) 
-        : base(tenantInfoContextAccessor, options)
-    {
-        TenantInfo = tenantInfoContextAccessor.MultiTenantContext?.TenantInfo;
-    }
+    private new OrgTenantInfo? TenantInfo { get; } = tenantInfoContextAccessor.MultiTenantContext?.TenantInfo;
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -40,10 +36,10 @@ public abstract class BaseDbContext
         }
     }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            base.OnModelCreating(modelBuilder);
-    
-            modelBuilder.ApplyConfigurationsFromAssembly(GetType().Assembly);
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        modelBuilder.ApplyConfigurationsFromAssembly(GetType().Assembly);
     }
 }

@@ -22,10 +22,10 @@ public class CreateCompanyCommandHandler : IRequestHandler<CreateCompanyCommand,
 
     public async Task<IResponseWrapper> Handle(CreateCompanyCommand request, CancellationToken cancellationToken)
     {
-        var newCompany = request.CreateCompany.Adapt<Company>();
+        var newCompany = request.CreateCompany.Adapt<Organization>();
 
         var companyId = await _companyService.CreateAsync(newCompany);
 
-        return await ResponseWrapper<int>.SuccessAsync(data: companyId, "Company created successfully.");
+        return await ResponseWrapper<int>.SuccessAsync(data: companyId, "Organization created successfully.");
     }
 }

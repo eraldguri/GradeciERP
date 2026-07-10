@@ -40,17 +40,17 @@ public static class Startup
         return services
             .AddDbContext<TenantDbContext>(options => options
                 .UseSqlServer(config.GetConnectionString("DefaultConnection")))
-            .AddMultiTenant<CompanyTenantInfo>()
+            .AddMultiTenant<OrgTenantInfo>()
                 .WithHeaderStrategy(TenancyConstants.TenantIdName)
                 .WithClaimStrategy(TenancyConstants.TenantIdName)
-                .WithEFCoreStore<TenantDbContext, CompanyTenantInfo>()
+                .WithEFCoreStore<TenantDbContext, OrgTenantInfo>()
                 .Services
             .AddDbContext<ApplicationDbContext>(options => options
                 .UseSqlServer(config.GetConnectionString("DefaultConnection")))
             .AddTransient<ITenantDbSeeder, TenantDbSeeder>()
             .AddTransient<ApplicationDbSeeder>()
             .AddTransient<ITenantService, TenantService>()
-            .AddTransient<ICompanyService, CompanyService>()
+            .AddTransient<ICompanyService, OrganizationService>()
             .AddIdentityService()
             .AddPermissions()
             .AddOpenApiDocumentation(config);
@@ -63,7 +63,7 @@ public static class Startup
         await scope.ServiceProvider.GetRequiredService<ITenantDbSeeder>().InitializeDatabaseAsync(ct);
     }
 
-    internal static IServiceCollection AddIdentityService(this IServiceCollection services)
+    private static IServiceCollection AddIdentityService(this IServiceCollection services)
     {
         return services
             .AddIdentity<ApplicationUser, ApplicationRole>(options =>
@@ -85,7 +85,7 @@ public static class Startup
             .AddScoped<CurrentUserMiddleware>();
     }
 
-    internal static IServiceCollection AddPermissions(this IServiceCollection services)
+    private static IServiceCollection AddPermissions(this IServiceCollection services)
     {
         return services
             .AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>()
@@ -131,42 +131,33 @@ public static class Startup
                     {
                         if (context.Exception is SecurityTokenExpiredException)
                         {
-                            if (!context.Response.HasStarted)
-                            {
-                                context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-                                context.Response.ContentType = "application/json";
+                            if (context.Response.HasStarted) return Task.CompletedTask;
+                            context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                            context.Response.ContentType = "application/json";
 
-                                var result = JsonConvert.SerializeObject(ResponseWrapper.Fail("Token has expired"));
-                                return context.Response.WriteAsync(result);
-                            }
-                            return Task.CompletedTask;
+                            var result = JsonConvert.SerializeObject(ResponseWrapper.Fail("Token has expired"));
+                            return context.Response.WriteAsync(result);
                         }
-                        else
-                        {
-                            if (!context.Response.HasStarted)
-                            {
-                                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                                context.Response.ContentType = "application/json";
 
-                                var result = JsonConvert.SerializeObject(ResponseWrapper.Fail("An unhandled error has occurred"));
-                                return context.Response.WriteAsync(result);
-                            }
-                            return Task.CompletedTask;
+                        if (context.Response.HasStarted) return Task.CompletedTask;
+                        {
+                            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                            context.Response.ContentType = "application/json";
+
+                            var result = JsonConvert.SerializeObject(ResponseWrapper.Fail("An unhandled error has occurred"));
+                            return context.Response.WriteAsync(result);
                         }
                     },
 
                     OnChallenge = context =>
                     {
                         context.HandleResponse();
-                        if (!context.Response.HasStarted)
-                        {
-                            context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-                            context.Response.ContentType = "application/json";
-                            var result = JsonConvert.SerializeObject(ResponseWrapper.Fail("You are not authorized"));
-                            return context.Response.WriteAsync(result);
-                        }
+                        if (context.Response.HasStarted) return Task.CompletedTask;
+                        context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                        context.Response.ContentType = "application/json";
+                        var result = JsonConvert.SerializeObject(ResponseWrapper.Fail("You are not authorized"));
+                        return context.Response.WriteAsync(result);
 
-                        return Task.CompletedTask;
                     },
 
                     OnForbidden = context =>
@@ -196,7 +187,7 @@ public static class Startup
         return services;
     }
 
-    internal static IServiceCollection AddOpenApiDocumentation(this IServiceCollection services, IConfiguration config)
+    private static IServiceCollection AddOpenApiDocumentation(this IServiceCollection services, IConfiguration config)
     {
         var swaggerSettings = config.GetSection(nameof(SwaggerSettings)).Get<SwaggerSettings>()!;
 
@@ -248,7 +239,7 @@ public static class Startup
             .UseOpenApiDocumentation();
     }
 
-    internal static IApplicationBuilder UseOpenApiDocumentation(this IApplicationBuilder app)
+    private static IApplicationBuilder UseOpenApiDocumentation(this IApplicationBuilder app)
     {
         app.UseOpenApi();
         app.UseSwaggerUi(options =>

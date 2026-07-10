@@ -26,6 +26,6 @@ public class GetCompanyByNameQueryHandler : IRequestHandler<GetCompanyByNameQuer
         {
             return await ResponseWrapper<CompanyResponse>.SuccessAsync(data: companyIdDb.Adapt<CompanyResponse>());
         }
-        return await ResponseWrapper<CompanyResponse>.FailAsync(message: "Company does not exists.");
+        return await ResponseWrapper<CompanyResponse>.FailAsync(message: "Organization does not exists.");
     }
 }

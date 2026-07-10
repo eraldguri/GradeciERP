@@ -4,10 +4,10 @@ namespace Application.Features.Companies;
 
 public interface ICompanyService
 {
-    Task<int> CreateAsync(Company company);
-    Task<int> UpdateAsync(Company company);
-    Task<int> DeleteAsync(Company company);
-    Task<Company?> GetByIdAsync(int companyId);
-    Task<List<Company>> GetAllAsync();
-    Task<Company?> GetByNameAsync(string name);
+    Task<int> CreateAsync(Organization organization);
+    Task<int> UpdateAsync(Organization organization);
+    Task<int> DeleteAsync(Organization organization);
+    Task<Organization?> GetByIdAsync(int companyId);
+    Task<List<Organization>> GetAllAsync();
+    Task<Organization?> GetByNameAsync(string name);
 }

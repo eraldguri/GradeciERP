@@ -6,20 +6,20 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Infrastructure.Migrations.ApplicationDb
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class ApplicationDBSeeder : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.EnsureSchema(
-                name: "organizations");
+                name: "Businesses");
 
             migrationBuilder.EnsureSchema(
                 name: "Identity");
 
             migrationBuilder.CreateTable(
-                name: "Companies",
-                schema: "organizations",
+                name: "Organizations",
+                schema: "Businesses",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -33,7 +33,7 @@ namespace Infrastructure.Migrations.ApplicationDb
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Companies", x => x.Id);
+                    table.PrimaryKey("PK_Organizations", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -260,8 +260,8 @@ namespace Infrastructure.Migrations.ApplicationDb
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Companies",
-                schema: "organizations");
+                name: "Organizations",
+                schema: "Businesses");
 
             migrationBuilder.DropTable(
                 name: "RoleClaims",

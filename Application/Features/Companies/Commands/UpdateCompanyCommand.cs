@@ -32,8 +32,8 @@ public class UpdateCompanyCommandHandler : IRequestHandler<UpdateCompanyCommand,
 
             var updatedCompanyId = await _companyService.UpdateAsync(companyInDb);
 
-            return await ResponseWrapper<int>.SuccessAsync(data: updatedCompanyId, "Company updated successfully");
+            return await ResponseWrapper<int>.SuccessAsync(data: updatedCompanyId, "Organization updated successfully");
         }
-        return await ResponseWrapper<int>.FailAsync("Company does not exists.");
+        return await ResponseWrapper<int>.FailAsync("Organization does not exists.");
     }
 }

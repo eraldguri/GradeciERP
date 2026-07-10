@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Context;
 
-internal class DbConfigurations
+internal static class DbConfigurations
 {
     internal class ApplicationUserConfig : IEntityTypeConfiguration<ApplicationUser>
     {
@@ -26,6 +26,18 @@ internal class DbConfigurations
             builder
                 .ToTable("Roles", "Identity")
                 .IsMultiTenant();
+
+            // builder
+            //     .HasIndex(role => role.NormalizedName)
+            //     .IsUnique(false)
+            //     .HasDatabaseName("RoleNameLegacyIndex")
+            //     .HasFilter("[NormalizedName] IS NOT NULL");
+            //
+            // builder
+            //     .HasIndex("NormalizedName", "TenantId")
+            //     .IsUnique()
+            //     .HasDatabaseName("RoleNameIndex")
+            //     .HasFilter("[NormalizedName] IS NOT NULL");
         }
     }
     internal class ApplicationRoleClaimConfig : IEntityTypeConfiguration<ApplicationRoleClaims>
@@ -68,12 +80,12 @@ internal class DbConfigurations
                 .IsMultiTenant();
     }
 
-    internal class SchoolConfig : IEntityTypeConfiguration<Company>
+    internal class SchoolConfig : IEntityTypeConfiguration<Organization>
     {
-        public void Configure(EntityTypeBuilder<Company> builder)
+        public void Configure(EntityTypeBuilder<Organization> builder)
         {
             builder
-                .ToTable("Companies", "organizations")
+                .ToTable("Organizations", "Businesses")
                 .IsMultiTenant();
 
             builder

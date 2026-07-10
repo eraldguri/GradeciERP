@@ -16,10 +16,10 @@ public class RoleService : IRoleService
     private readonly RoleManager<ApplicationRole> _roleManager;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly ApplicationDbContext _context;
-    private readonly IMultiTenantContextAccessor<CompanyTenantInfo> _tenantInfoContextAccessor;
+    private readonly IMultiTenantContextAccessor<OrgTenantInfo> _tenantInfoContextAccessor;
 
     public RoleService(RoleManager<ApplicationRole> roleManager, UserManager<ApplicationUser> userManager,
-        ApplicationDbContext context, IMultiTenantContextAccessor<CompanyTenantInfo> tenantInfoContextAccessor)
+        ApplicationDbContext context, IMultiTenantContextAccessor<OrgTenantInfo> tenantInfoContextAccessor)
     {
         _roleManager = roleManager;
         _userManager = userManager;

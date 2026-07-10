@@ -24,8 +24,8 @@ public class DeleteCompanyCommandHandler : IRequestHandler<DeleteCompanyCommand,
         {
             var deletedCompanyId = await _companyService.DeleteAsync(companyInDb);
 
-            return await ResponseWrapper<int>.SuccessAsync(data: deletedCompanyId, "Company deleted successfully");
+            return await ResponseWrapper<int>.SuccessAsync(data: deletedCompanyId, "Organization deleted successfully");
         }
-        return await ResponseWrapper<int>.FailAsync("Company does not exists.");
+        return await ResponseWrapper<int>.FailAsync("Organization does not exists.");
     }
 }

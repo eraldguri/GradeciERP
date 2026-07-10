@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations.ApplicationDb
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260709090932_InitialApplicationDbContext")]
-    partial class InitialApplicationDbContext
+    [Migration("20260710140747_ApplicationDBSeeder")]
+    partial class ApplicationDBSeeder
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,7 +25,7 @@ namespace Infrastructure.Migrations.ApplicationDb
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Domain.Company", b =>
+            modelBuilder.Entity("Domain.Organization", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -57,7 +57,7 @@ namespace Infrastructure.Migrations.ApplicationDb
 
                     b.HasKey("Id");
 
-                    b.ToTable("Companies", "organizations");
+                    b.ToTable("Organizations", "Businesses");
 
                     b.HasAnnotation("Finbuckle:MultiTenant", true);
                 });

@@ -1,8 +1,8 @@
 ﻿namespace Domain;
 
-public class Company
+public class Organization
 {
-    public int Id { get; set; }
+    public int Id { get; init; }
     public string? Name { get; set; }
     public string? Country { get; set; }
     public string? TimeZone { get; set; }

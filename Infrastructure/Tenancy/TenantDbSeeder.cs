@@ -7,22 +7,14 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Infrastructure.Tenancy;
 
-public class TenantDbSeeder : ITenantDbSeeder
+public class TenantDbSeeder(TenantDbContext tenantDbContext, IServiceProvider serviceProvider)
+    : ITenantDbSeeder
 {
-    private readonly TenantDbContext _tenantDbContext;
-    private readonly IServiceProvider _serviceProvider;
-
-    public TenantDbSeeder(TenantDbContext tenantDbContext, IServiceProvider serviceProvider)
-    {
-        _tenantDbContext = tenantDbContext;
-        _serviceProvider = serviceProvider;
-    }
-
     public async Task InitializeDatabaseAsync(CancellationToken ct)
     {
         await InitializeDatabaseWithTenantAsync(ct);
 
-        foreach (var tenant in await _tenantDbContext.TenantInfo.ToListAsync(ct))
+        foreach (var tenant in await tenantDbContext.TenantInfo.ToListAsync(ct))
         {
             await InitializeApplicationDbForTenant(tenant, ct);
         }
@@ -30,14 +22,14 @@ public class TenantDbSeeder : ITenantDbSeeder
 
     private async Task InitializeDatabaseWithTenantAsync(CancellationToken ct)
     {
-        if (_tenantDbContext.Database.GetMigrations().Any())
+        if (tenantDbContext.Database.GetMigrations().Any())
         {
-            await _tenantDbContext.Database.MigrateAsync(ct);
+            await tenantDbContext.Database.MigrateAsync(ct);
         }
 
-        if (await _tenantDbContext.TenantInfo.FindAsync([TenancyConstants.Root.Id], ct) is null)
+        if (await tenantDbContext.TenantInfo.FindAsync([TenancyConstants.Root.Id], ct) is null)
         {
-            var rootTenant = new CompanyTenantInfo
+            var rootTenant = new OrgTenantInfo
             {
                 Id = TenancyConstants.Root.Id,
                 Identifier = TenancyConstants.Root.Id,
@@ -49,17 +41,17 @@ public class TenantDbSeeder : ITenantDbSeeder
                 ValidUpTo = DateTime.UtcNow.AddYears(2)
             };
 
-            await _tenantDbContext.AddAsync(rootTenant, ct);
-            await _tenantDbContext.SaveChangesAsync(ct);
+            await tenantDbContext.AddAsync(rootTenant, ct);
+            await tenantDbContext.SaveChangesAsync(ct);
         }
     }
 
-    private async Task InitializeApplicationDbForTenant(CompanyTenantInfo currentTenant, CancellationToken ct)
+    private async Task InitializeApplicationDbForTenant(OrgTenantInfo currentTenant, CancellationToken ct)
     {
-        using var scope = _serviceProvider.CreateScope();
+        using var scope = serviceProvider.CreateScope();
 
-        _serviceProvider.GetRequiredService<IMultiTenantContextSetter>()
-            .MultiTenantContext = new MultiTenantContext<CompanyTenantInfo>()
+        serviceProvider.GetRequiredService<IMultiTenantContextSetter>()
+            .MultiTenantContext = new MultiTenantContext<OrgTenantInfo>()
             {
                 TenantInfo = currentTenant
             };
